@@ -15,7 +15,7 @@ opt['lr'] = 0.00211
 opt['decay'] = 5e-4
 opt['self_link_weight'] = 0.947
 opt['alpha']=0.95
-opt['epoch'] = 500
+opt['epoch'] = 600
 opt['time']=14.3
 opt['weight']=True
 
