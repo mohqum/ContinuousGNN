@@ -15,7 +15,7 @@ opt['lr'] = 0.0047
 opt['decay'] = 5e-4
 opt['self_link_weight'] = 0.555
 opt['alpha'] = 0.918
-opt['epoch'] = 500
+opt['epoch'] = 600
 opt['time']=12.1
 
 def generate_command(opt):
