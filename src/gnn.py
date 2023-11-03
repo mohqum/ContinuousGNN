@@ -82,13 +82,10 @@ class GNN(nn.Module):
 
         self.conv1 = GCNConv(opt['num_feature'], opt['hidden_dim'])  # First GCN layer
         
-
-        #self.m1 = nn.Linear(opt['num_feature'], opt['hidden_dim'])
-
         self.odeblock = ODEblock(ODEFunc(2*opt['hidden_dim'], 2*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
 
         self.conv2 = GCNConv(opt['hidden_dim'], opt['num_class'])  # Second GCN layer
-        #self.m2 = nn.Linear(opt['hidden_dim'], opt['num_class'])
+  
 
         if opt['cuda']:
             self.cuda()
@@ -103,7 +100,7 @@ class GNN(nn.Module):
     def forward(self, x):
         # Encode each node based on its feature.
         x = F.dropout(x, self.opt['input_dropout'], training=self.training)
-        #x = self.m1(x)
+        
 
         # Coalesce the adjacency matrix.
         self.adj = self.adj.coalesce()
@@ -127,8 +124,6 @@ class GNN(nn.Module):
         z = F.dropout(z, self.opt['dropout'], training=self.training)
 
         # Decode each node embedding to get node label.
-        #z = self.m2(z)
-        # Apply the second GCN layer without ReLU.
         z = self.conv2(z, self.adj)
         return z
 
