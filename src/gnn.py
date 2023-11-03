@@ -91,9 +91,6 @@ class GNN(nn.Module):
             self.cuda()
 
     def reset(self):
-        #self.m1.reset_parameters()
-        #self.m2.reset_parameters()
-
         self.conv1.reset_parameters()
         self.conv2.reset_parameters()
 
