@@ -6,6 +6,8 @@ from torch import nn
 from torch.nn import init
 from torch.autograd import Variable
 import torch.nn.functional as F
+ 
+from torch_geometric.nn import GCNConv # My part
 
 # Whether use adjoint method or not.
 adjoint = False
@@ -78,23 +80,37 @@ class GNN(nn.Module):
         self.adj = adj
         self.T = time
 
-        self.m1 = nn.Linear(opt['num_feature'], opt['hidden_dim'])
+        self.conv1 = GCNConv(opt['num_feature'], opt['hidden_dim'])  # First GCN layer
+        
+
+        #self.m1 = nn.Linear(opt['num_feature'], opt['hidden_dim'])
 
         self.odeblock = ODEblock(ODEFunc(2*opt['hidden_dim'], 2*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
 
-        self.m2 = nn.Linear(opt['hidden_dim'], opt['num_class'])
+        self.conv2 = GCNConv(opt['hidden_dim'], opt['num_class'])  # Second GCN layer
+        #self.m2 = nn.Linear(opt['hidden_dim'], opt['num_class'])
 
         if opt['cuda']:
             self.cuda()
 
     def reset(self):
-        self.m1.reset_parameters()
-        self.m2.reset_parameters()
+        #self.m1.reset_parameters()
+        #self.m2.reset_parameters()
+
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
 
     def forward(self, x):
         # Encode each node based on its feature.
         x = F.dropout(x, self.opt['input_dropout'], training=self.training)
-        x = self.m1(x)
+        #x = self.m1(x)
+
+        # Coalesce the adjacency matrix.
+        self.adj = self.adj.coalesce()
+     
+        # Apply the first GCN layer.
+        x = self.conv1(x, self.adj)
+  
 
         # Solve the initial value problem of the ODE.
         c_aux = torch.zeros(x.shape).cuda()
@@ -111,6 +127,8 @@ class GNN(nn.Module):
         z = F.dropout(z, self.opt['dropout'], training=self.training)
 
         # Decode each node embedding to get node label.
-        z = self.m2(z)
+        #z = self.m2(z)
+        # Apply the second GCN layer without ReLU.
+        z = self.conv2(z, self.adj)
         return z
 
