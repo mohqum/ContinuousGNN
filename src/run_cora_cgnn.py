@@ -10,7 +10,7 @@ opt['dataset'] = '../data/cora'
 opt['hidden_dim'] = 16
 opt['input_dropout'] = 0.5
 opt['dropout'] = 0
-opt['optimizer'] = 'rmsprop'
+opt['optimizer'] = 'adam' # adam=83.4, rmsprop=82.9
 opt['lr'] = 0.0047
 opt['decay'] = 5e-4
 opt['self_link_weight'] = 0.555
