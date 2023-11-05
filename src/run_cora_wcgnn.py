@@ -7,14 +7,14 @@ import datetime
 opt = dict()
 
 opt['dataset'] = '../data/cora'
-opt['hidden_dim'] = 16
+opt['hidden_dim'] = 40
 opt['input_dropout'] = 0.5
 opt['dropout'] = 0
 opt['optimizer'] = 'rmsprop'
 opt['lr'] = 0.00211
 opt['decay'] = 5e-4
 opt['self_link_weight'] = 0.947
-opt['alpha']=0.95
+opt['alpha']=0.6
 opt['epoch'] = 400
 opt['time']=14.3
 opt['weight']=True
