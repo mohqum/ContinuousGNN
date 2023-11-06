@@ -86,6 +86,51 @@ class WGNN(nn.Module):
         self.adj = adj
         self.T = time
 
+        self.m1 = nn.Linear(opt['num_feature'], opt['hidden_dim'])
+
+        self.odeblock = ODEblockW(ODEFuncW(2*opt['hidden_dim'], 2*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
+
+        self.m2 = nn.Linear(opt['hidden_dim'], opt['num_class'])
+
+        if opt['cuda']:
+            self.cuda()
+
+    def reset(self):
+        self.m1.reset_parameters()
+        self.m2.reset_parameters()
+
+    def forward(self, x):
+        # Encode each node based on its feature.
+        x = F.dropout(x, self.opt['input_dropout'], training=self.training)
+        x = self.m1(x)
+
+        # Solve the initial value problem of the ODE.
+        c_aux = torch.zeros(x.shape).cuda()
+        x = torch.cat([x,c_aux], dim=1)
+        self.odeblock.set_x0(x)
+
+        z = self.odeblock(x)
+        z = torch.split(z, x.shape[1]//2, dim=1)[0]
+
+        # Activation.
+        z = F.relu(z)
+
+        # Dropout.
+        z = F.dropout(z, self.opt['dropout'], training=self.training)
+
+        # Decode each node embedding to get node label.
+        z = self.m2(z)
+        return z
+
+
+# Define my own Custom WGNN model.
+class Custom_WGNN(nn.Module):
+    def __init__(self, opt, adj, deg, time):
+        super(WGNN, self).__init__()
+        self.opt = opt
+        self.adj = adj
+        self.T = time
+
         self.conv1 = GCNConv(opt['num_feature'], opt['hidden_dim'])
 
         self.odeblock = ODEblockW(ODEFuncW(2*opt['hidden_dim'], 2*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
@@ -127,4 +172,3 @@ class WGNN(nn.Module):
         # Decode each node embedding to get node label.
         z = self.conv2(z, self.adj)
         return z
-

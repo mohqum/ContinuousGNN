@@ -10,6 +10,7 @@ from trainer import Trainer
 from gnn import GNN
 from gnn import Custom_GNN
 from wgnn import WGNN
+from wgnn import Custom_WGNN
 import loader
 
 from orion.client import report_results
@@ -71,7 +72,7 @@ def main(opt):
     # Build model.
     #--------------------------------------------------
     if opt['weight']:
-        gnn = WGNN(opt, adj, deg, opt['time'])
+        gnn = Custom_WGNN(opt, adj, deg, opt['time'])
     else:
         gnn = Custom_GNN(opt, adj, deg, opt['time'])
     trainer = Trainer(opt, gnn)
