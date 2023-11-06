@@ -53,7 +53,7 @@ class Custom_ODEFunc(nn.Module):
 
     # currently requires in_features = out_features
     def __init__(self, in_features, out_features, opt, adj, deg):
-        super(ODEFunc, self).__init__()
+        super(Custom_ODEFunc, self).__init__()
         self.opt = opt
         self.adj = adj
         self.x0 = None
@@ -71,7 +71,7 @@ class Custom_ODEFunc(nn.Module):
 
         alph = F.sigmoid(self.alpha_train).unsqueeze(dim=1)
         ax = torch.spmm(self.adj, x)
-        modified_x = x * self.w
+        modified_x = x * self.d
         f = alph * 0.5 * (ax - modified_x) + self.x0
         return f
 
@@ -156,7 +156,7 @@ class Custom_GNN(nn.Module):
 
         self.conv1 = GCNConv(opt['num_feature'], opt['hidden_dim'])  # First GCN layer
         
-        self.odeblock = ODEblock(ODEFunc(2*opt['hidden_dim'], 2*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
+        self.odeblock = ODEblock(Custom_ODEFunc(2*opt['hidden_dim'], 2*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
 
         self.conv2 = GCNConv(opt['hidden_dim'], opt['num_class'])  # Second GCN layer
   
