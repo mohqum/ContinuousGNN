@@ -126,7 +126,7 @@ class WGNN(nn.Module):
 # Define my own Custom WGNN model.
 class Custom_WGNN(nn.Module):
     def __init__(self, opt, adj, deg, time):
-        super(WGNN, self).__init__()
+        super(Custom_WGNN, self).__init__()
         self.opt = opt
         self.adj = adj
         self.T = time

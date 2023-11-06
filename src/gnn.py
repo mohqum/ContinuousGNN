@@ -48,6 +48,33 @@ class ODEFunc(nn.Module):
         f = alph * 0.5 * (ax-x) + self.x0
         return f
 
+# Define my own Custom ODEFunc.  
+class Custom_ODEFunc(nn.Module):
+
+    # currently requires in_features = out_features
+    def __init__(self, in_features, out_features, opt, adj, deg):
+        super(ODEFunc, self).__init__()
+        self.opt = opt
+        self.adj = adj
+        self.x0 = None
+        self.nfe = 0
+        self.in_features = in_features
+        self.out_features = out_features
+        self.alpha = opt['alpha']
+        self.alpha_train = nn.Parameter(self.alpha*torch.ones(adj.shape[1]))
+
+        self.w = nn.Parameter(torch.eye(opt['hidden_dim']))
+        self.d = nn.Parameter(torch.zeros(opt['hidden_dim']) + 1)
+
+    def forward(self, t, x):
+        self.nfe +=1
+
+        alph = F.sigmoid(self.alpha_train).unsqueeze(dim=1)
+        ax = torch.spmm(self.adj, x)
+        modified_x = x * self.w
+        f = alph * 0.5 * (ax - modified_x) + self.x0
+        return f
+
 
 
 class ODEblock(nn.Module):
