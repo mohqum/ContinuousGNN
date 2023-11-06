@@ -8,6 +8,7 @@ import torch
 
 from trainer import Trainer
 from gnn import GNN
+from gnn import Custom_GNN
 from wgnn import WGNN
 import loader
 
@@ -72,7 +73,7 @@ def main(opt):
     if opt['weight']:
         gnn = WGNN(opt, adj, deg, opt['time'])
     else:
-        gnn = GNN(opt, adj, deg, opt['time'])
+        gnn = Custom_GNN(opt, adj, deg, opt['time'])
     trainer = Trainer(opt, gnn)
     print(gnn)
     print(opt)
