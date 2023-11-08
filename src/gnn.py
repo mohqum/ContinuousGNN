@@ -47,7 +47,9 @@ class ODEFunc(nn.Module):
         ax = torch.spmm(self.adj, x)
         f = alph * 0.5 * (ax-x) + self.x0
         return f
- #Define my own Custom ODEFunc   
+
+
+#Define my own Custom ODEFunc   
 class Custom_ODEFunc(nn.Module):
 
     # currently requires in_features = out_features
