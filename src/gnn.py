@@ -47,6 +47,31 @@ class ODEFunc(nn.Module):
         ax = torch.spmm(self.adj, x)
         f = alph * 0.5 * (ax-x) + self.x0
         return f
+ #Define my own Custom ODEFunc   
+class Custom_ODEFunc(nn.Module):
+
+    # currently requires in_features = out_features
+    def __init__(self, in_features, out_features, opt, adj, deg):
+        super(Custom_ODEFunc, self).__init__()
+        self.opt = opt
+        self.adj = adj
+        self.x0 = None
+        self.nfe = 0
+        self.in_features = in_features
+        self.out_features = out_features
+        self.alpha = opt['alpha']
+        self.alpha_train = nn.Parameter(self.alpha*torch.ones(adj.shape[1]))
+
+        self.w = nn.Parameter(torch.eye(opt['hidden_dim']))
+        self.d = nn.Parameter(torch.zeros(opt['hidden_dim']) + 1)
+
+    def forward(self, t, x):
+        self.nfe +=1
+
+        alph = F.leaky_relu(self.alpha_train).unsqueeze(dim=1)
+        ax = torch.spmm(self.adj, x)
+        f = alph * 0.6 * (ax-x) + self.x0
+        return f
 
 class ODEblock(nn.Module):
     def __init__(self, odefunc, t=torch.tensor([0,1])):
@@ -127,7 +152,7 @@ class Custom_GNN(nn.Module):
 
         self.conv1 = GCNConv(opt['num_feature'], opt['hidden_dim'])  # First GCN layer
         
-        self.odeblock = ODEblock(ODEFunc(2*opt['hidden_dim'], 2*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
+        self.odeblock = ODEblock(Custom_ODEFunc(3*opt['hidden_dim'], 3*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
 
         self.conv2 = GCNConv(opt['hidden_dim'], opt['num_class'])  # Second GCN layer
   
