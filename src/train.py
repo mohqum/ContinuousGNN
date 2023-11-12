@@ -165,6 +165,8 @@ if __name__ == '__main__':
     parser.add_argument('--analysis', type=bool, default=False, help='Enables the production of various analysis '
                                                                      'plots.')
     parser.add_argument('--weight', type=bool, default=False, help='Set to true to use CGNN with weight')
+    parser.add_argument('--decay_l1', type=float, default=1e-4, help='l1 regularization constant')
+
 
     args = parser.parse_args()
 

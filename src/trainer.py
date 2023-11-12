@@ -51,7 +51,6 @@ class Trainer(object):
         self.model = model
         self.fm = Meter()
         self.bm = Meter()
-        self.decay_l1 = 1e-4
         self.criterion = nn.CrossEntropyLoss()
         self.parameters = [p for p in self.model.parameters() if p.requires_grad]
         if opt['cuda']:
@@ -96,7 +95,7 @@ class Trainer(object):
         for param in self.parameters:
             l2_reg += torch.norm(param)
 
-        loss += self.opt['decay'] * l2_reg + self.decay_l1 * l1_reg
+        loss += self.opt['decay'] * l2_reg + self.opt['decay_l1'] * l1_reg
 
         self.fm.update(self.model.odeblock.nfe)
         self.model.odeblock.nfe = 0
