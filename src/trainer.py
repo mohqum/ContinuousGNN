@@ -111,13 +111,18 @@ class Trainer(object):
         logits = self.model(inputs)
         loss = self.criterion(logits[idx], target[idx])
 
+        # Apply L1 regularization
+        l1_reg = torch.tensor(0.0).to(inputs.device)
+        for param in self.parameters:
+          l1_reg += torch.norm(param, p=1)  # Use p=1 for L1 norm
+
         # Apply L2 regularization (weight decay).
         l2_reg = torch.tensor(0.0).to(inputs.device)
 
         for param in self.parameters:
             l2_reg += torch.norm(param)
 
-        loss += self.opt['decay'] * l2_reg 
+        loss += self.opt['decay'] * l2_reg + self.decay_l1 * l1_reg
         
 
         self.fm.update(self.model.odeblock.odefunc.nfe)
