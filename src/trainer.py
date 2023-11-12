@@ -68,9 +68,9 @@ class Trainer(object):
     def weight_initialize(self):
       for layer in self.model.modules():
         if isinstance(layer, nn.Linear):
-          nn.init.xavier_uniform_(layer.weight)
-        if self.bias is not None:
-          nn.init.zeroes_(layer.bias)
+          print("inside instance")
+          nn.init.xavier_uniform_(layer.weight) #Executes only once since one linear layer
+        
 
     # Train model with hard labels.
     def update(self, inputs, target, idx):
