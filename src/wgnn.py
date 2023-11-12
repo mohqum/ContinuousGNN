@@ -135,7 +135,10 @@ class Custom_WGNN(nn.Module):
 
         self.odeblock = ODEblockW(ODEFuncW(2*opt['hidden_dim'], 2*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
 
-        self.conv2 = GCNConv(opt['hidden_dim'], opt['num_class'])
+        self.conv2 = GCNConv(opt['hidden_dim'], opt['hidden_dim'])
+
+        # Add a linear layer as the last layer
+        self.linear_layer = nn.Linear(opt['hidden_dim'], opt['num_class'])
 
         if opt['cuda']:
             self.cuda()
@@ -143,6 +146,7 @@ class Custom_WGNN(nn.Module):
     def reset(self):
         self.conv1.reset_parameters()
         self.conv2.reset_parameters()
+        self.linear_layer.reset_parameters()
 
     def forward(self, x):
         # Encode each node based on its feature.
@@ -169,6 +173,10 @@ class Custom_WGNN(nn.Module):
         # Dropout.
         z = F.dropout(z, self.opt['dropout'], training=self.training)
 
-        # Decode each node embedding to get node label.
+        # Apply the second GCN layer.
         z = self.conv2(z, self.adj)
+
+        # Apply the linear layer as the last layer.
+        z = self.linear_layer(z)
+        
         return z

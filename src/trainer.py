@@ -57,10 +57,20 @@ class Trainer(object):
         if opt['cuda']:
             self.criterion.cuda()
         self.optimizer = get_optimizer(self.opt['optimizer'], self.parameters, self.opt['lr'], self.opt['decay'])
+        
+        #Apply weight Initialization
+        self.weight_initialize()
 
     def reset(self):
         self.model.reset()
         self.optimizer = get_optimizer(self.opt['optimizer'], self.parameters, self.opt['lr'], self.opt['decay'])
+
+    def weight_initialize(self):
+      for layer in self.model.modules():
+        if isinstance(layer, nn.Linear):
+          nn.init.xavier_uniform_(layer.weight)
+        if self.bias is not None:
+          nn.init.zeroes_(layer.bias)
 
     # Train model with hard labels.
     def update(self, inputs, target, idx):
