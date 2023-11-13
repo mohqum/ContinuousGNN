@@ -131,7 +131,7 @@ class Trainer(object):
         for param in self.parameters:
             l2_reg += torch.norm(param)
 
-        loss += self.opt['decay'] * l2_reg + self.decay_l1 * l1_reg
+        loss += self.opt['decay'] * l2_reg + self.opt['decay_l1'] * l1_reg
         
 
         self.fm.update(self.model.odeblock.odefunc.nfe)

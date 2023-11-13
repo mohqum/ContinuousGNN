@@ -18,6 +18,7 @@ opt['alpha']=0.6
 opt['epoch'] = 400
 opt['time']=14.3
 opt['weight']=True
+opt['decay_l1']=1e-4
 
 def generate_command(opt):
     cmd = 'python train.py'
