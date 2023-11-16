@@ -67,7 +67,7 @@ class Trainer(object):
     def weight_initialize(self):
       for layer in self.model.modules():
         if isinstance(layer, nn.Linear):
-          print("inside instance")
+          print("Weight Initialization on Linear Layer")
           nn.init.xavier_uniform_(layer.weight) #Executes only once since one linear layer
         
 
