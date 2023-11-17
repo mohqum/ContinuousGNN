@@ -156,10 +156,8 @@ class Custom_GNN(nn.Module):
         
         self.odeblock = ODEblock(Custom_ODEFunc(3*opt['hidden_dim'], 3*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
 
-        self.conv2 = GCNConv(opt['hidden_dim'], opt['hidden_dim'])  # Second GCN layer
+        self.conv2 = GCNConv(opt['hidden_dim'], opt['num_classes'])  # Second GCN layer
 
-        # Add a linear layer as the last layer
-        self.linear_layer = nn.Linear(opt['hidden_dim'], opt['num_class'])
   
 
         if opt['cuda']:
@@ -168,7 +166,7 @@ class Custom_GNN(nn.Module):
     def reset(self):
         self.conv1.reset_parameters()
         self.conv2.reset_parameters()
-        self.linear_layer.reset_parameters()
+      
 
     def forward(self, x):
         # Encode each node based on its feature.
@@ -198,9 +196,8 @@ class Custom_GNN(nn.Module):
 
         # Decode each node embedding to get node label.
         z = self.conv2(z, self.adj)
-        
-        # Apply the linear layer as the last layer.
-        z = self.linear_layer(z)
+
+
 
         return z
 
