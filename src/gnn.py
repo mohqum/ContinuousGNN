@@ -156,7 +156,7 @@ class Custom_GNN(nn.Module):
         
         self.odeblock = ODEblock(Custom_ODEFunc(3*opt['hidden_dim'], 3*opt['hidden_dim'], opt, adj, deg), t=torch.tensor([0,self.T]))
 
-        self.conv2 = GCNConv(opt['hidden_dim'], opt['num_classes'])  # Second GCN layer
+        self.conv2 = GCNConv(opt['hidden_dim'], opt['num_class'])  # Second GCN layer
 
   
 
