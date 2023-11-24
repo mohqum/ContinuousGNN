@@ -1,5 +1,5 @@
-# Continuous Graph Neural Networks
 # This repository was cloned for my ECE 570 AI course project
+# Continuous Graph Neural Networks
 Louis-Pascal A. C. Xhonneux<sup>\*</sup>, Meng Qu<sup>\*</sup>, and Jian Tang  
 [https://arxiv.org/pdf/1912.00967.pdf](https://arxiv.org/pdf/1912.00967.pdf)
 
